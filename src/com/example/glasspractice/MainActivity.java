@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -24,9 +23,9 @@ public class MainActivity extends Activity {
 	Card mainCard;
 	private GestureDetector mGestureDetector;
 	public List<Gesture> gestures;
-	StringBuilder stringBuilder;
-	public boolean gestureMade;
-	public boolean running;
+	StringBuilder stringBuilder = new StringBuilder();
+	public boolean gestureMade = false;
+	public boolean running = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,39 +42,41 @@ public class MainActivity extends Activity {
 			@Override
 			public boolean onGesture(Gesture gesture) {
 				gestureMade = true;
-				switch (gesture) {
-				case TAP:
-					//exit input mode
-				case SWIPE_RIGHT:
+				
+				if(running) {
 					gestures.add(gesture);
-					if(!running) {
-						new asyncTask().execute();
-					}
 					return true;
-				case SWIPE_LEFT:
-					if(running)
+				}
+				else
+					switch (gesture) {
+					case TAP:
+						//exit input mode
+					case SWIPE_RIGHT:
 						gestures.add(gesture);
-					else
+						new asyncTask().execute();
+						return true;
+					case SWIPE_LEFT:
 						if(stringBuilder.length() > 0) {
 							stringBuilder.setLength(stringBuilder.length() - 1);
 							mainCard.setText(stringBuilder.toString());
+							}
+						return true;
+					case SWIPE_UP:
+						//shift
+						return true;
+					case SWIPE_DOWN:
+						//something
+						return true;
+					case TWO_SWIPE_RIGHT:
+						//cursor control
+						return true;
+					case TWO_SWIPE_LEFT:
+						//cursor control
+						return true;
+					default:
+						Toast.makeText(getApplicationContext(), "not handled", Toast.LENGTH_LONG).show();
+						return false;
 						}
-					return true;
-				case SWIPE_UP:
-					if(running) {
-						gestures.add(gesture);
-						}
-					return true;
-				case SWIPE_DOWN:
-					if(running) {
-						gestures.add(gesture);
-						}
-					return true;
-				default:
-					Toast.makeText(getApplicationContext(), "not handled", Toast.LENGTH_LONG);
-					break;
-				}
-				return false;
 				}
 			});
 		return gestureDetector;
@@ -90,7 +91,7 @@ public class MainActivity extends Activity {
 			startTime = System.currentTimeMillis();
 			elapsedTime = 0L;
 			running = true;
-			Toast.makeText(getApplicationContext(), toLetter(gestures), Toast.LENGTH_LONG);
+			Toast.makeText(getApplicationContext(), toLetter(gestures), Toast.LENGTH_LONG).show();
 			while(elapsedTime < 1*1000) {
 				elapsedTime = (new Date()).getTime() - startTime;
 				if(gestureMade) {
@@ -111,19 +112,63 @@ public class MainActivity extends Activity {
 	}
 	
 	public char toLetter(List<Gesture> gestures){
-		 if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT))
-			 return 'a';
-		 if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT, Gesture.SWIPE_DOWN))
-			 return 'b';
-		 if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT, Gesture.SWIPE_UP))
-			 return 'c';
-		 if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT, Gesture.SWIPE_LEFT))
-			 return 'd';
-		 else
-			 Toast.makeText(getApplicationContext(), "bad input", Toast.LENGTH_LONG);
+		if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT))
+			return 'a';
+		if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT, Gesture.SWIPE_DOWN))
+			return 'e';
+		if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT, Gesture.SWIPE_LEFT))
+			 return 'i';
+		if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT, Gesture.SWIPE_UP))
+			return 'o';
+		if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT, Gesture.SWIPE_RIGHT))
+			return 'u';
+		if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT, Gesture.SWIPE_DOWN, Gesture.SWIPE_DOWN))
+			return 'b';
+		if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT, Gesture.SWIPE_DOWN, Gesture.SWIPE_LEFT))
+			return 'c';
+		if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT, Gesture.SWIPE_DOWN, Gesture.SWIPE_UP))
+			return 'd';
+		if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT, Gesture.SWIPE_DOWN, Gesture.SWIPE_RIGHT))
+			return 'f';
+		if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT, Gesture.SWIPE_LEFT, Gesture.SWIPE_DOWN))
+			return 'g';
+		if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT, Gesture.SWIPE_LEFT, Gesture.SWIPE_LEFT))
+			return 'h';
+		if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT, Gesture.SWIPE_LEFT, Gesture.SWIPE_UP))
+			return 'j';
+		if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT, Gesture.SWIPE_LEFT, Gesture.SWIPE_RIGHT))
+			return 'k';
+		if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT, Gesture.TAP))
+			return 'l';
+		if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT, Gesture.TAP, Gesture.SWIPE_DOWN))
+			return 'm';
+		if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT, Gesture.TAP, Gesture.SWIPE_LEFT))
+			return 'n';
+		if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT, Gesture.TAP, Gesture.SWIPE_UP))
+			return 'p';
+		if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT, Gesture.TAP, Gesture.SWIPE_RIGHT))
+			return 'q';
+		if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT, Gesture.TWO_SWIPE_RIGHT))
+			return 'r';
+		if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT, Gesture.TWO_SWIPE_DOWN))
+			return 's';
+		if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT, Gesture.TWO_SWIPE_LEFT))
+			return 't';
+		if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT, Gesture.TWO_SWIPE_UP))
+			return 'v';
+		if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT, Gesture.TWO_SWIPE_RIGHT, Gesture.SWIPE_DOWN))
+			return 'w';
+		if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT, Gesture.TWO_SWIPE_RIGHT, Gesture.SWIPE_LEFT))
+			return 'x';
+		if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT, Gesture.TWO_SWIPE_RIGHT, Gesture.SWIPE_UP))
+			return 'y';
+		if(gestures == Arrays.asList(Gesture.SWIPE_RIGHT, Gesture.TWO_SWIPE_RIGHT, Gesture.SWIPE_RIGHT))
+			return 'z';
+		else
+			Toast.makeText(getApplicationContext(), "bad input", Toast.LENGTH_LONG).show();
 		 
 		return ' ';
-	 }
+		}
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
